@@ -16,3 +16,9 @@
   2：将jazz网络图用gephi进行了可视化
   ![image](https://user-images.githubusercontent.com/74004273/147211819-1197217e-493f-400d-8079-058913b0b2ec.png)
 }
+
+2021.12.24
+{
+  1:今天准备实现k-shell算法，将它应用于经典网络集，挖掘出关键节点
+
+}
