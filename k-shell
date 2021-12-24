@@ -1,0 +1,54 @@
+import csv
+from operator import itemgetter
+import networkx as nx
+from networkx.algorithms import community
+
+node_path = r'C:\Users\zzsgdsg7\Desktop\zz_literature\data\data_classical\quakers\quakers_nodelist.csv'
+edge_path = r'C:\Users\zzsgdsg7\Desktop\zz_literature\data\data_classical\quakers\quakers_edgelist.csv'
+
+with open (node_path) as nodecsv:
+    nodereader = csv.reader(nodecsv)
+    nodes = [n for n in nodereader][1:]
+node_names = [n[0] for n in nodes]
+
+with open(edge_path) as edgecsv: # Open the file
+    edgereader = csv.reader(edgecsv) # Read the csv
+    edges = [tuple(e) for e in edgereader][1:] # Retrieve the data
+
+G = nx.Graph()
+G.add_nodes_from(node_names)
+G.add_edges_from(edges)
+print(G.degree)
+
+def gDegree(G):
+    """
+    将G.degree()的返回值变为字典
+    """
+    node_degrees_dict = {}
+    for i in G.degree():
+        node_degrees_dict[i[0]]=i[1]
+        print(node_degrees_dict)
+    return node_degrees_dict.copy()
+
+def kshell(G):
+    graph = G.copy()
+    importance_dict={}
+    level=1
+    while len(graph.degree):
+        importance_dict[level]=[]
+        while True:
+            level_node_list=[]
+            for item in graph.degree:
+                if item[1]<=level:
+                    level_node_list.append(item[0])
+            graph.remove_nodes_from(level_node_list)
+            importance_dict[level].extend(level_node_list)
+            if not len(graph.degree):
+                return importance_dict
+            if min(graph.degree,key=lambda x:x[1])[1]>level:
+                break
+        level=min(graph.degree,key=lambda x:x[1])[1]
+        print(importance_dict)
+    return importance_dict
+
+kshell(G)
