@@ -1,0 +1,68 @@
+import networkx as nx
+import math
+def kshell(G):
+    graph = G.copy()
+    importance_dict={}
+    level=1
+    while len(graph.degree):
+        importance_dict[level]=[]
+        while True:
+            level_node_list=[]
+            for item in graph.degree:
+                if item[1]<=level:
+                    level_node_list.append(item[0])
+            graph.remove_nodes_from(level_node_list)
+            importance_dict[level].extend(level_node_list)
+            if not len(graph.degree):
+                return importance_dict
+            if min(graph.degree,key=lambda x:x[1])[1]>level:
+                break
+        level=min(graph.degree,key=lambda x:x[1])[1]
+    return importance_dict
+
+def gDegree(G):
+    """
+    将G.degree()的返回值变为字典
+    """
+    node_degrees_dict = {}
+    for i in G.degree():
+        node_degrees_dict[i[0]]=i[1]
+    return node_degrees_dict.copy()
+
+def get_neigbors(g, node, depth=1):
+    output = {}
+    layers = dict(nx.bfs_successors(g, source=node, depth_limit=depth))
+    nodes = [node]
+    for i in range(1,depth+1):
+        output[i] = []
+        for x in nodes:
+            output[i].extend(layers.get(x,[]))
+        nodes = output[i]
+    return output
+
+def get_ksnode(ks):
+    ks_node = {}
+    for k,v in ks.items():
+        for i in v:
+            ks_node[i] = k
+    return ks_node
+
+G = nx.read_edgelist("dataset/jazz.txt")
+ks = kshell(G.copy())
+ks_min = min(ks)
+ks_max = max(ks)
+k = gDegree(G)
+ks_node = get_ksnode(ks)
+m_d = 2.235
+score = {}
+for i in G.nodes():
+    s = 0
+    neighbor = get_neigbors(G,i,int(0.5*m_d))
+    for d,nodes in neighbor.items():
+        for j in nodes:
+            cij = (ks_node[i] - ks_node[j])/math.exp(ks_max-ks_min)
+            s += cij*((k[i]*k[j])/d**2)
+    score[i] = s
+score
+
+原文链接：https://blog.csdn.net/lanshashi/article/details/122149042
