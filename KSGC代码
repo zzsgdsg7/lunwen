@@ -64,5 +64,3 @@ for i in G.nodes():
             s += cij*((k[i]*k[j])/d**2)
     score[i] = s
 score
-
-原文链接：https://blog.csdn.net/lanshashi/article/details/122149042
